@@ -21,15 +21,10 @@ class GameScreen extends StatelessWidget {
                 mainAxisExtent: 140,
               ),
               itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.nilBox,
-                    borderRadius: BorderRadius.circular(25),
-                  ),
+                return BoxItem(
+                  onTap: () {
+                    currentIndex.value = index;
+                  },
                 );
               },
             ),
@@ -39,3 +34,5 @@ class GameScreen extends StatelessWidget {
     );
   }
 }
+
+ValueNotifier<int?> currentIndex = ValueNotifier(null);
