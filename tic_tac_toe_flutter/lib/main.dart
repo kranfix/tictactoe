@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tic_tac_toe/core/feature/game/presenter/view/search_game.dart';
+import 'package:tic_tac_toe/core/feature/game/presenter/view/start_game.dart';
 import 'package:tic_tac_toe/firebase_impls/firebase_impls.dart';
 import 'package:tic_tac_toe/firebase_options.dart';
 

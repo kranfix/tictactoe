@@ -47,7 +47,12 @@ class _StartGameState extends State<StartGame> {
             const Text('Play stand-alone'),
             ElevatedButton(
               onPressed: () {
-                final gameScreen = GameScreen.standAlone();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GameScreen.standAlone(),
+                  ),
+                );
               },
               child: const Text('Stand-alone game'),
             ),
@@ -58,8 +63,13 @@ class _StartGameState extends State<StartGame> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    final gameScreen =
-                        GameScreen.vsMachine(myToken: Token.circle);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            GameScreen.vsMachine(myToken: myToken),
+                      ),
+                    );
                   },
                   child: const Text('Start vs Machine'),
                 ),
@@ -91,8 +101,17 @@ class _StartGameState extends State<StartGame> {
                   onPressed: () async {
                     final gameRepo = context.watch<GameRepo>();
                     final game = await gameRepo.createGame("dummy game");
-                    final gameScreen = GameScreen.playWithRemote(
-                        gameId: game.id, myToken: myToken, gameRepo: gameRepo);
+                    if (!context.mounted) return;
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameScreen.playWithRemote(
+                          gameId: game.id,
+                          myToken: myToken,
+                          gameRepo: gameRepo,
+                        ),
+                      ),
+                    );
                   },
                   child: const Text('Start vs Machine'),
                 ),
