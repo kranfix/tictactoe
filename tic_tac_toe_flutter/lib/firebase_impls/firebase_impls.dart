@@ -1,1 +1,1 @@
-export './firebase_remote_player.dart';
+export './firestore_game_repo.dart';

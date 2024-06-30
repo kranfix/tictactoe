@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:tic_tac_toe_flutter/domain/game_search.dart';
 import './board.dart';
 
 abstract interface class Player {
@@ -47,24 +47,43 @@ class LocalPlayer extends Player {
 /// currentBoard: "ox_xoo__x"
 /// lastPlayer: "o", // 'o' | 'x'
 /// lastIndex: 4, // 0..<9
-abstract class RemotePlayer extends Player {
-  RemotePlayer({required super.myToken}) {
-    _unsub = subscribe(_onNext);
+class RemotePlayer extends Player {
+  RemotePlayer({
+    required this.id,
+    required super.myToken,
+    required this.gameRepo,
+  }) {
+    subscribe(_onNext);
   }
 
+  final String id;
+  final GameRepo gameRepo;
   Completer<int>? _completer;
-
-  // Save BoardSerialization, last player(myToken)
-  Future<void> updateState(BoardSerialization board);
 
   void Function()? _unsub;
 
-  void Function() subscribe(
-      void Function(Token lastPlayer, int lastIndex) onNext);
+  void subscribe(
+    void Function(Token lastPlayer, int lastIndex) onNext,
+  ) {
+    _unsub?.call();
+    _unsub = null;
 
-  void _onNext(Token lastPlayer, int lastIndex) {
+    final stream = gameRepo.subscribeToGame(id);
+    final sub = stream.listen((game) {
+      if (game != null) {
+        final lastIndex = game.lastIndex;
+        if (lastIndex != null) {
+          onNext(game.nextPlayer, lastIndex);
+        }
+      }
+    });
+
+    _unsub = () => sub.cancel();
+  }
+
+  void _onNext(Token nextPlayer, int lastIndex) {
     // Ignored because it was the local player
-    if (lastPlayer != myToken) return;
+    if (nextPlayer != myToken) return;
 
     _completer?.complete(lastIndex);
     _completer = null;
@@ -72,7 +91,11 @@ abstract class RemotePlayer extends Player {
 
   @override
   Future<int> requestNext(BoardSerialization data) async {
-    await updateState(data);
+    await gameRepo.updateGame(
+      id,
+      board: data,
+      nextPlayer: myToken,
+    );
     _completer ??= Completer();
     return _completer!.future;
   }
