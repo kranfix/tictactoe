@@ -1,1 +1,1 @@
-export './board/board.dart';
+export 'game/game.dart';

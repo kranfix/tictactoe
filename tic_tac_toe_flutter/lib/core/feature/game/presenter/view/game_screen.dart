@@ -1,64 +1,23 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe_flutter/core/design_system/design_system.dart';
 import 'package:tic_tac_toe_flutter/lib.dart';
 
-class GameScreen extends StatefulWidget {
+class GameScreen extends StatelessWidget {
   const GameScreen({super.key});
 
   @override
-  State<GameScreen> createState() => _GameScreenState();
-}
-
-class _GameScreenState extends State<GameScreen> {
-  final controller = TokenController(
-      circlePlayer: LocalPlayer(
-        myToken: Token.circle,
-      ),
-      crossPlayer: LocalPlayer(
-        myToken: Token.cross,
-      ));
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: AppColors.background,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AnimatedBuilder(
-                animation: controller,
-                builder: (context, child) {
-                  return GridView.builder(
-                    shrinkWrap: true,
-                    itemCount: 9,
-                    physics: const BouncingScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisExtent: 140,
-                    ),
-                    itemBuilder: (context, index) {
-                      return BoxItem(
-                        onTap: () =>
-                            controller.notifyLocalSelectionToPLayers(index),
-                        child: controller.board.at(index)?.toText(),
-                      );
-                    },
-                  );
-                })
+            BoardBoxes(),
           ],
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
   }
 }
 
@@ -66,8 +25,8 @@ extension ToText on Token {
   Widget toText() => Text(this == Token.circle ? 'O' : 'X');
 }
 
-class TokenController extends ChangeNotifier {
-  TokenController({required this.circlePlayer, required this.crossPlayer}) {
+class Game extends ChangeNotifier {
+  Game({required this.circlePlayer, required this.crossPlayer}) {
     _start();
   }
 
@@ -142,42 +101,54 @@ class TokenController extends ChangeNotifier {
   }
 }
 
-abstract interface class Player {
-  const Player();
-  Future<int> requestNext(BoardSerialization board);
+class BoardBoxes extends StatefulWidget {
+  const BoardBoxes({super.key});
 
-  void dispose();
+  @override
+  State<BoardBoxes> createState() => _BoardBoxesState();
 }
 
-class LocalPlayer implements Player {
-  LocalPlayer({
-    required this.myToken,
-  })  : _completer = null,
-        board = Board();
+class _BoardBoxesState extends State<BoardBoxes> {
+  final controller = Game(
+      circlePlayer: LocalPlayer(
+        myToken: Token.circle,
+      ),
+      crossPlayer: LocalPlayer(
+        myToken: Token.cross,
+      ));
 
-  final Token myToken;
+  void update() {
+    setState(() {});
+  }
 
-  Completer<int>? _completer;
-  Board board;
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(update);
+  }
 
   @override
   void dispose() {
-    _completer = null;
-  }
-
-  void insertToken(int index) {
-    if (_completer == null) return;
-    final wasInserted = board.insertTokenAt(index, myToken);
-    if (wasInserted) {
-      _completer!.complete(index);
-      _completer = null;
-    }
+    super.dispose();
+    controller.removeListener(update);
   }
 
   @override
-  Future<int> requestNext(BoardSerialization data) {
-    board = Board.deserialize(data);
-    _completer ??= Completer();
-    return _completer!.future;
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      shrinkWrap: true,
+      itemCount: 9,
+      physics: const BouncingScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisExtent: 140,
+      ),
+      itemBuilder: (context, index) {
+        return BoxItem(
+          onTap: () => controller.notifyLocalSelectionToPLayers(index),
+          child: controller.board.at(index)?.toText(),
+        );
+      },
+    );
   }
 }

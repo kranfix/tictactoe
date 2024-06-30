@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 enum Token {
   circle,
   cross,
@@ -16,7 +14,7 @@ extension type Board._(List<Token?> _tokens) {
     }
     data = data.substring(0, 9);
     final tokens = <Token?>[];
-    for (final c in data.characters) {
+    for (final c in data.split('')) {
       switch (c) {
         case '_':
           tokens.add(null);
