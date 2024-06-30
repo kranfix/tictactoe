@@ -22,34 +22,28 @@ class _StartGameState extends State<StartGame> {
     return Scaffold(
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const Spacer(),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Checkbox(
-                  value: myToken == Token.circle,
-                  onChanged: (value) {
-                    if (value == true) {
-                      setState(() {
-                        myToken = Token.circle;
-                      });
-                    }
+                const Text('O'),
+                Switch(
+                  value: myToken == Token.cross,
+                  onChanged: (val) {
+                    setState(
+                      () {
+                        myToken = myToken.other;
+                      },
+                    );
                   },
                 ),
-                Checkbox(
-                    value: myToken == Token.cross,
-                    onChanged: (value) {
-                      if (value == true) {
-                        setState(() {
-                          myToken = Token.cross;
-                        });
-                      }
-                    }),
+                const Text('X')
               ],
             ),
             const Divider(),
-            const Spacer(),
             const Text('Play stand-alone'),
             ElevatedButton(
               onPressed: () {
@@ -60,6 +54,7 @@ class _StartGameState extends State<StartGame> {
             const Divider(),
             const Text('Play vs Machine'),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: () {
@@ -72,8 +67,25 @@ class _StartGameState extends State<StartGame> {
             ),
             const Divider(),
             const Text('Play vs Machine'),
-            TextField(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: TextField(
+                  decoration: InputDecoration(
+                      hintText: 'Do Something',
+                      hintStyle: TextStyle(
+                        color: Colors.grey[350],
+                      )),
+                ),
+              ),
+            ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: () async {
