@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:tic_tac_toe/core/feature/game/presenter/view/game_screen.dart';
+import 'package:tic_tac_toe/core/feature/game/presenter/view/search_game.dart';
 import 'package:tic_tac_toe/firebase_options.dart';
 
 Future<void> main() async {
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Tic Tact Toe',
-      home: GameScreen(),
+      home: StartGame(),
     );
   }
 }
