@@ -15,11 +15,11 @@ class GameScreen extends StatefulWidget {
   State<GameScreen> createState() => _GameScreenState();
 }
 
-const tokensDemo = [
-  Token.circle, null, null, //
-  null, Token.circle, null, //
-  Token.cross, null, null
-];
+// const tokensDemo = [
+//   Token.circle, null, null, //
+//   null, Token.circle, null, //
+//   Token.cross, null, null
+// ];
 
 class _GameScreenState extends State<GameScreen> {
   final controller = TokenController(
