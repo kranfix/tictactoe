@@ -85,4 +85,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'tictactoe-50bcd.appspot.com',
     measurementId: 'G-WFXJK0QCLC',
   );
+
 }
