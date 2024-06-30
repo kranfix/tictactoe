@@ -42,7 +42,7 @@ class FirestoreGameRepo extends GameRepo {
       lastIndex: null,
       status: GameStatus.waitingForOtherPlayer,
     );
-    await colRef.doc().set(initialGame.toMap());
+    await docRef.set(initialGame.toMap());
     return initialGame;
   }
 
