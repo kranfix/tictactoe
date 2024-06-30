@@ -6,15 +6,18 @@ class BoxItem extends StatelessWidget {
     super.key,
     this.onTap,
     this.color = AppColors.nilBox,
+    this.child,
   });
   final VoidCallback? onTap;
   final Color color;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        alignment: Alignment.center,
         margin: const EdgeInsets.symmetric(
           vertical: 10,
           horizontal: 10,
@@ -23,6 +26,16 @@ class BoxItem extends StatelessWidget {
           color: color,
           borderRadius: BorderRadius.circular(25),
         ),
+        child: child == null
+            ? null
+            : DefaultTextStyle(
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 50,
+                ),
+                child: child!,
+              ),
       ),
     );
   }
