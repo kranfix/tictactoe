@@ -76,7 +76,7 @@ class _StartGameState extends State<StartGame> {
               ],
             ),
             const Divider(),
-            const Text('Play vs Machine'),
+            const Text('Play with Remote Player'),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -99,7 +99,7 @@ class _StartGameState extends State<StartGame> {
               children: [
                 ElevatedButton(
                   onPressed: () async {
-                    final gameRepo = context.watch<GameRepo>();
+                    final gameRepo = context.read<GameRepo>();
                     final game = await gameRepo.createGame("dummy game");
                     if (!context.mounted) return;
                     await Navigator.push(
@@ -113,7 +113,7 @@ class _StartGameState extends State<StartGame> {
                       ),
                     );
                   },
-                  child: const Text('Start vs Machine'),
+                  child: const Text('Create Game'),
                 ),
               ],
             ),
