@@ -1,74 +1,23 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe_flutter/core/design_system/design_system.dart';
+import 'package:tic_tac_toe_flutter/lib.dart';
 
-enum Token {
-  circle,
-  cross,
-}
-
-class GameScreen extends StatefulWidget {
+class GameScreen extends StatelessWidget {
   const GameScreen({super.key});
 
   @override
-  State<GameScreen> createState() => _GameScreenState();
-}
-
-// const tokensDemo = [
-//   Token.circle, null, null, //
-//   null, Token.circle, null, //
-//   Token.cross, null, null
-// ];
-
-class _GameScreenState extends State<GameScreen> {
-  final controller = TokenController(
-      circlePlayer: LocalPlayer(
-        myToken: Token.circle,
-      ),
-      crossPlayer: LocalPlayer(
-        myToken: Token.cross,
-      ));
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: AppColors.background,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AnimatedBuilder(
-                animation: controller,
-                builder: (context, child) {
-                  return GridView.builder(
-                    shrinkWrap: true,
-                    itemCount: 9,
-                    physics: const BouncingScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisExtent: 140,
-                    ),
-                    itemBuilder: (context, index) {
-                      return BoxItem(
-                        onTap: () =>
-                            controller.notifyLocalSelectionToPLayers(index),
-                        child: controller.tokens[index]?.toText(),
-                      );
-                    },
-                  );
-                })
+            BoardBoxes(),
           ],
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
   }
 }
 
@@ -76,22 +25,21 @@ extension ToText on Token {
   Widget toText() => Text(this == Token.circle ? 'O' : 'X');
 }
 
-class TokenController extends ChangeNotifier {
-  TokenController({required this.circlePlayer, required this.crossPlayer}) {
+class Game extends ChangeNotifier {
+  Game({required this.circlePlayer, required this.crossPlayer}) {
     _start();
   }
 
   Player circlePlayer;
   Player crossPlayer;
 
-  List<Token?> get tokens => _tokens;
-
-  int get remaindingBoxes =>
-      tokens.fold(0, (acc, token) => token == null ? acc + 1 : acc);
+  int _remaindingBoxes = 9;
+  int get remaindingBoxes => _remaindingBoxes;
 
   Token? nextToken = Token.circle;
 
-  final List<Token?> _tokens = List.generate(9, (_) => null);
+  final _tokens = Board();
+  Board get board => _tokens;
 
   bool _isAlive = true;
 
@@ -101,19 +49,13 @@ class TokenController extends ChangeNotifier {
         case null:
           return;
         case Token.circle:
-          final index = await circlePlayer.requestNext(tokens: [...tokens]);
+          final index = await circlePlayer.requestNext(board.serialize());
           final wasInserted = _insertToken(index);
-          if (wasInserted) {
-            nextToken = Token.cross;
-            break;
-          }
+          if (wasInserted) break;
         case Token.cross:
-          final index = await crossPlayer.requestNext(tokens: [...tokens]);
+          final index = await crossPlayer.requestNext(board.serialize());
           final wasInserted = _insertToken(index);
-          if (wasInserted) {
-            nextToken = Token.circle;
-            break;
-          }
+          if (wasInserted) break;
       }
     }
   }
@@ -134,16 +76,22 @@ class TokenController extends ChangeNotifier {
   }
 
   bool _insertToken(int index) {
-    if (_tokens[index] == null) {
-      _tokens[index] = nextToken;
-      if (remaindingBoxes == 0) {
-        nextToken = null;
-      }
-      notifyListeners();
-      return true;
-    }
+    final nextToken = this.nextToken;
+    if (nextToken == null) return false;
+    final wasInserted = board.insertTokenAt(index, nextToken);
+    if (!wasInserted) return false;
 
-    return false;
+    _remaindingBoxes--;
+    if (_remaindingBoxes == 0) {
+      this.nextToken = null;
+    } else {
+      this.nextToken = switch (nextToken) {
+        Token.circle => Token.cross,
+        Token.cross => Token.circle,
+      };
+    }
+    notifyListeners();
+    return true;
   }
 
   @override
@@ -153,40 +101,54 @@ class TokenController extends ChangeNotifier {
   }
 }
 
-abstract interface class Player {
-  const Player();
-  Future<int> requestNext({required List<Token?> tokens});
+class BoardBoxes extends StatefulWidget {
+  const BoardBoxes({super.key});
 
-  void dispose();
+  @override
+  State<BoardBoxes> createState() => _BoardBoxesState();
 }
 
-class LocalPlayer implements Player {
-  LocalPlayer({
-    required this.myToken,
-  })  : _completer = null,
-        tokens = List.generate(9, (_) => null);
+class _BoardBoxesState extends State<BoardBoxes> {
+  final controller = Game(
+      circlePlayer: LocalPlayer(
+        myToken: Token.circle,
+      ),
+      crossPlayer: LocalPlayer(
+        myToken: Token.cross,
+      ));
 
-  final Token myToken;
+  void update() {
+    setState(() {});
+  }
 
-  Completer<int>? _completer;
-  List<Token?> tokens;
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(update);
+  }
 
   @override
   void dispose() {
-    _completer = null;
-  }
-
-  void insertToken(int index) {
-    if (_completer == null || tokens[index] != null) return;
-    tokens[index] = myToken;
-    _completer!.complete(index);
-    _completer = null;
+    super.dispose();
+    controller.removeListener(update);
   }
 
   @override
-  Future<int> requestNext({required List<Token?> tokens}) {
-    this.tokens = tokens;
-    _completer ??= Completer();
-    return _completer!.future;
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      shrinkWrap: true,
+      itemCount: 9,
+      physics: const BouncingScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisExtent: 140,
+      ),
+      itemBuilder: (context, index) {
+        return BoxItem(
+          onTap: () => controller.notifyLocalSelectionToPLayers(index),
+          child: controller.board.at(index)?.toText(),
+        );
+      },
+    );
   }
 }
