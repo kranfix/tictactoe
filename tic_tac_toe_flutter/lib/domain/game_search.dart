@@ -16,7 +16,7 @@ abstract class GameRepo {
 }
 
 enum GameStatus {
-  waitingForCrossPlayer,
+  waitingForOtherPlayer,
   active,
   draw,
   wonCircle,

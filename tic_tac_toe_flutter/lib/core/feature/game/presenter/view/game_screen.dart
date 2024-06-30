@@ -1,19 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe/core/design_system/design_system.dart';
+import 'package:tic_tac_toe/domain/game_search.dart';
+import 'package:tic_tac_toe/game/game.dart';
 import 'package:tic_tac_toe/lib.dart';
 
 class GameScreen extends StatelessWidget {
-  const GameScreen({super.key});
+  const GameScreen._({super.key, required this.game});
+
+  factory GameScreen.standAlone({Key? key}) {
+    final game = Game(
+      circlePlayer: LocalPlayer(myToken: Token.circle),
+      crossPlayer: LocalPlayer(myToken: Token.cross),
+    );
+
+    return GameScreen._(key: key, game: game);
+  }
+
+  factory GameScreen.vsMachine({Key? key, required Token myToken}) {
+    final me = LocalPlayer(myToken: myToken);
+    final other = MachinePlayer(myToken: myToken.other);
+    final game = switch (myToken) {
+      Token.circle => Game(circlePlayer: me, crossPlayer: other),
+      Token.cross => Game(circlePlayer: other, crossPlayer: me),
+    };
+
+    return GameScreen._(key: key, game: game);
+  }
+
+  factory GameScreen.playWithRemote({
+    Key? key,
+    required String gameId,
+    required Token myToken,
+    required GameRepo gameRepo,
+  }) {
+    final me = LocalPlayer(myToken: myToken);
+    final other =
+        RemotePlayer(myToken: myToken.other, id: gameId, gameRepo: gameRepo);
+    final game = switch (myToken) {
+      Token.circle => Game(circlePlayer: me, crossPlayer: other),
+      Token.cross => Game(circlePlayer: other, crossPlayer: me),
+    };
+
+    return GameScreen._(key: key, game: game);
+  }
+
+  final Game game;
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: AppColors.background,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            BoardBoxes(),
+            BoardBoxes(
+              game: Game(
+                circlePlayer: LocalPlayer(
+                  myToken: Token.circle,
+                ),
+                crossPlayer: LocalPlayer(
+                  myToken: Token.cross,
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -102,20 +152,16 @@ class Game extends ChangeNotifier {
 }
 
 class BoardBoxes extends StatefulWidget {
-  const BoardBoxes({super.key});
+  const BoardBoxes({super.key, required this.game});
+
+  final Game game;
 
   @override
   State<BoardBoxes> createState() => _BoardBoxesState();
 }
 
 class _BoardBoxesState extends State<BoardBoxes> {
-  final controller = Game(
-      circlePlayer: LocalPlayer(
-        myToken: Token.circle,
-      ),
-      crossPlayer: LocalPlayer(
-        myToken: Token.cross,
-      ));
+  Game get controller => widget.game;
 
   void update() {
     setState(() {});

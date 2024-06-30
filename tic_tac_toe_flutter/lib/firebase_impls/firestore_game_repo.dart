@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tic_tac_toe/domain/domain.dart';
 import 'package:tic_tac_toe/game/board.dart';
 
-class FirestoreGameSearch extends GameRepo {
+class FirestoreGameRepo extends GameRepo {
   static final colRef = FirebaseFirestore.instance.collection('tictactoe');
 
   @override
@@ -20,7 +20,7 @@ class FirestoreGameSearch extends GameRepo {
   @override
   Future<List<GameDescriptor>> listWaitingForCrossPlayerGames() async {
     final snapshot = await colRef
-        .where("status", isEqualTo: GameStatus.waitingForCrossPlayer.toString())
+        .where("status", isEqualTo: GameStatus.waitingForOtherPlayer.toString())
         .limit(10)
         .get();
     return snapshot.docs
@@ -40,7 +40,7 @@ class FirestoreGameSearch extends GameRepo {
       board: BoardSerialization.empty(),
       nextPlayer: Token.circle,
       lastIndex: null,
-      status: GameStatus.waitingForCrossPlayer,
+      status: GameStatus.waitingForOtherPlayer,
     );
     await colRef.doc().set(initialGame.toMap());
     return initialGame;

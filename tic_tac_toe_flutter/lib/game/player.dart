@@ -43,6 +43,20 @@ class LocalPlayer extends Player {
   }
 }
 
+class MachinePlayer extends Player {
+  MachinePlayer({required super.myToken});
+
+  @override
+  void dispose() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int> requestNext(BoardSerialization data) {
+    throw UnimplementedError();
+  }
+}
+
 /// In DB we must save
 /// currentBoard: "ox_xoo__x"
 /// lastPlayer: "o", // 'o' | 'x'

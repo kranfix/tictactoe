@@ -8,6 +8,11 @@ enum Token {
     }
     throw Exception("Invalid token");
   }
+
+  Token get other => switch (this) {
+        Token.circle => Token.cross,
+        Token.cross => Token.circle,
+      };
 }
 
 extension type Board._(List<Token?> _tokens) {
