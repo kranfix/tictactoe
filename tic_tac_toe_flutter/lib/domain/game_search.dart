@@ -71,6 +71,7 @@ class GameDescriptor {
 
   Map<String, dynamic> toMap() {
     return {
+      "id": id,
       "name": name,
       "board": board,
       "nextPlayer": nextPlayer.name,
