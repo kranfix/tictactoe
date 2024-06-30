@@ -73,9 +73,9 @@ class GameDescriptor {
     return {
       "name": name,
       "board": board,
-      "nextPlayer": nextPlayer.toString(),
+      "nextPlayer": nextPlayer.name,
       "lastIndex": lastIndex,
-      "status": status.toString(),
+      "status": status.name,
     };
   }
 }
