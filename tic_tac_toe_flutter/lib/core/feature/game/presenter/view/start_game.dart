@@ -76,47 +76,7 @@ class _StartGameState extends State<StartGame> {
               ],
             ),
             const Divider(),
-            const Text('Play with Remote Player'),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TextField(
-                  decoration: InputDecoration(
-                      hintText: 'Do Something',
-                      hintStyle: TextStyle(
-                        color: Colors.grey[350],
-                      )),
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    final gameRepo = context.read<GameRepo>();
-                    final game = await gameRepo.createGame("dummy game");
-                    if (!context.mounted) return;
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GameScreen.playWithRemote(
-                          gameId: game.id,
-                          myToken: myToken,
-                          gameRepo: gameRepo,
-                        ),
-                      ),
-                    );
-                  },
-                  child: const Text('Create Game'),
-                ),
-              ],
-            ),
+            CreateRemoteGame(myToken: myToken),
             const Divider(),
             const Text('Play vs remote player'),
             const Divider(),
@@ -171,6 +131,73 @@ class OpenGameButton extends StatelessWidget {
       child: ListTile(
         title: Text(game.name),
       ),
+    );
+  }
+}
+
+class CreateRemoteGame extends StatefulWidget {
+  const CreateRemoteGame({super.key, required this.myToken});
+
+  final Token myToken;
+
+  @override
+  State<CreateRemoteGame> createState() => _CreateRemoteGameState();
+}
+
+class _CreateRemoteGameState extends State<CreateRemoteGame> {
+  String gameName = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text('Play with Remote Player'),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Do Something',
+                hintStyle: TextStyle(
+                  color: Colors.grey[350],
+                ),
+              ),
+              onChanged: (value) => {gameName = value},
+            ),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                if (gameName.trim().isEmpty) {
+                  return;
+                }
+                final gameRepo = context.read<GameRepo>();
+                final game = await gameRepo.createGame(gameName);
+                if (!context.mounted) return;
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GameScreen.playWithRemote(
+                      gameId: game.id,
+                      myToken: widget.myToken,
+                      gameRepo: gameRepo,
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Create Game'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
