@@ -7,8 +7,22 @@ class FirestoreGameSearch extends GameRepo {
 
   @override
   Future<List<GameDescriptor>> listActiveGames() async {
-    final snapshot =
-        await colRef.where("status", isEqualTo: "active").limit(10).get();
+    final snapshot = await colRef
+        .where("status", isEqualTo: GameStatus.active.toString())
+        .limit(10)
+        .get();
+    return snapshot.docs
+        .map((snap) => snap.data())
+        .map(GameDescriptor.fromMap)
+        .toList();
+  }
+
+  @override
+  Future<List<GameDescriptor>> listWaitingForCrossPlayerGames() async {
+    final snapshot = await colRef
+        .where("status", isEqualTo: GameStatus.waitingForCrossPlayer.toString())
+        .limit(10)
+        .get();
     return snapshot.docs
         .map((snap) => snap.data())
         .map(GameDescriptor.fromMap)

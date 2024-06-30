@@ -2,6 +2,7 @@ import 'package:tic_tac_toe/game/board.dart';
 
 abstract class GameRepo {
   Future<List<GameDescriptor>> listActiveGames();
+  Future<List<GameDescriptor>> listWaitingForCrossPlayerGames();
 
   Future<GameDescriptor> createGame(String name);
   Future<void> updateGame(
