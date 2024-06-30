@@ -42,17 +42,17 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyDs8rXGG-gtDpu8atuCqVCcdl48U5HZfJw',
-    appId: '1:1085432450848:web:5b751aee9ca8066ac71145',
+    appId: '1:1085432450848:web:b12fd55accc18f4cc71145',
     messagingSenderId: '1085432450848',
     projectId: 'tictactoe-50bcd',
     authDomain: 'tictactoe-50bcd.firebaseapp.com',
     storageBucket: 'tictactoe-50bcd.appspot.com',
-    measurementId: 'G-FDYQJDWH77',
+    measurementId: 'G-5X2KEG46GC',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAoQJkROp6mDZIOa7Q6KXs-Wu9db3lt_oA',
-    appId: '1:1085432450848:android:f8a08f48f1888457c71145',
+    appId: '1:1085432450848:android:d5035553cfd29594c71145',
     messagingSenderId: '1085432450848',
     projectId: 'tictactoe-50bcd',
     storageBucket: 'tictactoe-50bcd.appspot.com',
@@ -60,20 +60,20 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDHHBT3P7E9ccfHHhC9-sP2wIOqTt_r3mw',
-    appId: '1:1085432450848:ios:0ac48cd27c274701c71145',
+    appId: '1:1085432450848:ios:868cc25f0893b3b8c71145',
     messagingSenderId: '1085432450848',
     projectId: 'tictactoe-50bcd',
     storageBucket: 'tictactoe-50bcd.appspot.com',
-    iosBundleId: 'dev.kranfix.tictactoe.ticTacToeFlutter',
+    iosBundleId: 'dev.kranfix.ticTacToeFlutter',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDHHBT3P7E9ccfHHhC9-sP2wIOqTt_r3mw',
-    appId: '1:1085432450848:ios:70c1118bf45dcbcec71145',
+    appId: '1:1085432450848:ios:868cc25f0893b3b8c71145',
     messagingSenderId: '1085432450848',
     projectId: 'tictactoe-50bcd',
     storageBucket: 'tictactoe-50bcd.appspot.com',
-    iosBundleId: 'com.example.ticTacToeFlutter',
+    iosBundleId: 'dev.kranfix.ticTacToeFlutter',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

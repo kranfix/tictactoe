@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.ticTacToeFlutter</string>
+	<string>dev.kranfix.ticTacToeFlutter</string>
 	<key>PROJECT_ID</key>
 	<string>tictactoe-50bcd</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1085432450848:ios:70c1118bf45dcbcec71145</string>
+	<string>1:1085432450848:ios:868cc25f0893b3b8c71145</string>
 </dict>
 </plist>

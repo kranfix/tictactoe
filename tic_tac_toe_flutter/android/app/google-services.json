@@ -7,7 +7,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1085432450848:android:f8a08f48f1888457c71145",
+        "mobilesdk_app_id": "1:1085432450848:android:d5035553cfd29594c71145",
         "android_client_info": {
           "package_name": "dev.kranfix.tictactoe"
         }
