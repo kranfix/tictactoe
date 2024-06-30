@@ -1,6 +1,13 @@
 enum Token {
   circle,
-  cross,
+  cross;
+
+  factory Token.fromString(String value) {
+    for (final s in Token.values) {
+      if (s.toString() == value) return s;
+    }
+    throw Exception("Invalid token");
+  }
 }
 
 extension type Board._(List<Token?> _tokens) {
@@ -49,7 +56,7 @@ extension type Board._(List<Token?> _tokens) {
       };
       sb.write(char);
     }
-    return BoardSerialization._(sb.toString());
+    return BoardSerialization.unsafe(sb.toString());
   }
 }
 
@@ -64,4 +71,6 @@ enum BoardDeserializeError implements Exception {
 //   Token.cross, null, null
 // ];
 
-extension type BoardSerialization._(String _val) implements String {}
+extension type BoardSerialization.unsafe(String _val) implements String {
+  factory BoardSerialization.empty() => BoardSerialization.unsafe("_________");
+}
