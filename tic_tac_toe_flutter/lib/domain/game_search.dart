@@ -24,7 +24,7 @@ enum GameStatus {
 
   factory GameStatus.fromString(String value) {
     for (final s in GameStatus.values) {
-      if (s.toString() == value) return s;
+      if (s.name == value) return s;
     }
     throw Exception("Invalid Status");
   }

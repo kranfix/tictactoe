@@ -8,7 +8,7 @@ class FirestoreGameRepo extends GameRepo {
   @override
   Future<List<GameDescriptor>> listActiveGames() async {
     final snapshot = await colRef
-        .where("status", isEqualTo: GameStatus.active.toString())
+        .where("status", isEqualTo: GameStatus.active.name)
         .limit(10)
         .get();
     return snapshot.docs
@@ -20,7 +20,7 @@ class FirestoreGameRepo extends GameRepo {
   @override
   Future<List<GameDescriptor>> listWaitingForCrossPlayerGames() async {
     final snapshot = await colRef
-        .where("status", isEqualTo: GameStatus.waitingForOtherPlayer.toString())
+        .where("status", isEqualTo: GameStatus.waitingForOtherPlayer.name)
         .limit(10)
         .get();
     return snapshot.docs
@@ -56,9 +56,9 @@ class FirestoreGameRepo extends GameRepo {
   }) async {
     final data = {
       if (board != null) 'board': board,
-      if (nextPlayer != null) 'nextPlayer': nextPlayer.toString(),
+      if (nextPlayer != null) 'nextPlayer': nextPlayer.name,
       if (lastIndex != null) 'lastIndex': lastIndex,
-      if (status != null) 'status': status.toString(),
+      if (status != null) 'status': status.name,
     };
     if (data.isNotEmpty) {
       await colRef.doc(id).update(data);

@@ -4,7 +4,7 @@ enum Token {
 
   factory Token.fromString(String value) {
     for (final s in Token.values) {
-      if (s.toString() == value) return s;
+      if (s.name == value) return s;
     }
     throw Exception("Invalid token");
   }
