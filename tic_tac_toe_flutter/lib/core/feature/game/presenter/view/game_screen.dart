@@ -2,11 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe_flutter/core/design_system/design_system.dart';
-
-enum Token {
-  circle,
-  cross,
-}
+import 'package:tic_tac_toe_flutter/lib.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -14,12 +10,6 @@ class GameScreen extends StatefulWidget {
   @override
   State<GameScreen> createState() => _GameScreenState();
 }
-
-// const tokensDemo = [
-//   Token.circle, null, null, //
-//   null, Token.circle, null, //
-//   Token.cross, null, null
-// ];
 
 class _GameScreenState extends State<GameScreen> {
   final controller = TokenController(
@@ -54,7 +44,7 @@ class _GameScreenState extends State<GameScreen> {
                       return BoxItem(
                         onTap: () =>
                             controller.notifyLocalSelectionToPLayers(index),
-                        child: controller.tokens[index]?.toText(),
+                        child: controller.board.at(index)?.toText(),
                       );
                     },
                   );
@@ -84,14 +74,13 @@ class TokenController extends ChangeNotifier {
   Player circlePlayer;
   Player crossPlayer;
 
-  List<Token?> get tokens => _tokens;
-
-  int get remaindingBoxes =>
-      tokens.fold(0, (acc, token) => token == null ? acc + 1 : acc);
+  int _remaindingBoxes = 9;
+  int get remaindingBoxes => _remaindingBoxes;
 
   Token? nextToken = Token.circle;
 
-  final List<Token?> _tokens = List.generate(9, (_) => null);
+  final _tokens = Board();
+  Board get board => _tokens;
 
   bool _isAlive = true;
 
@@ -101,19 +90,13 @@ class TokenController extends ChangeNotifier {
         case null:
           return;
         case Token.circle:
-          final index = await circlePlayer.requestNext(tokens: [...tokens]);
+          final index = await circlePlayer.requestNext(board.serialize());
           final wasInserted = _insertToken(index);
-          if (wasInserted) {
-            nextToken = Token.cross;
-            break;
-          }
+          if (wasInserted) break;
         case Token.cross:
-          final index = await crossPlayer.requestNext(tokens: [...tokens]);
+          final index = await crossPlayer.requestNext(board.serialize());
           final wasInserted = _insertToken(index);
-          if (wasInserted) {
-            nextToken = Token.circle;
-            break;
-          }
+          if (wasInserted) break;
       }
     }
   }
@@ -134,16 +117,22 @@ class TokenController extends ChangeNotifier {
   }
 
   bool _insertToken(int index) {
-    if (_tokens[index] == null) {
-      _tokens[index] = nextToken;
-      if (remaindingBoxes == 0) {
-        nextToken = null;
-      }
-      notifyListeners();
-      return true;
-    }
+    final nextToken = this.nextToken;
+    if (nextToken == null) return false;
+    final wasInserted = board.insertTokenAt(index, nextToken);
+    if (!wasInserted) return false;
 
-    return false;
+    _remaindingBoxes--;
+    if (_remaindingBoxes == 0) {
+      this.nextToken = null;
+    } else {
+      this.nextToken = switch (nextToken) {
+        Token.circle => Token.cross,
+        Token.cross => Token.circle,
+      };
+    }
+    notifyListeners();
+    return true;
   }
 
   @override
@@ -155,7 +144,7 @@ class TokenController extends ChangeNotifier {
 
 abstract interface class Player {
   const Player();
-  Future<int> requestNext({required List<Token?> tokens});
+  Future<int> requestNext(BoardSerialization board);
 
   void dispose();
 }
@@ -164,12 +153,12 @@ class LocalPlayer implements Player {
   LocalPlayer({
     required this.myToken,
   })  : _completer = null,
-        tokens = List.generate(9, (_) => null);
+        board = Board();
 
   final Token myToken;
 
   Completer<int>? _completer;
-  List<Token?> tokens;
+  Board board;
 
   @override
   void dispose() {
@@ -177,15 +166,17 @@ class LocalPlayer implements Player {
   }
 
   void insertToken(int index) {
-    if (_completer == null || tokens[index] != null) return;
-    tokens[index] = myToken;
-    _completer!.complete(index);
-    _completer = null;
+    if (_completer == null) return;
+    final wasInserted = board.insertTokenAt(index, myToken);
+    if (wasInserted) {
+      _completer!.complete(index);
+      _completer = null;
+    }
   }
 
   @override
-  Future<int> requestNext({required List<Token?> tokens}) {
-    this.tokens = tokens;
+  Future<int> requestNext(BoardSerialization data) {
+    board = Board.deserialize(data);
     _completer ??= Completer();
     return _completer!.future;
   }
