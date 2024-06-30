@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:tic_tac_toe_flutter/domain/game_search.dart';
+import 'package:tic_tac_toe/domain/game_search.dart';
 import './board.dart';
 
 abstract interface class Player {

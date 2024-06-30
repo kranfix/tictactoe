@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tic_tac_toe_flutter/domain/domain.dart';
+import 'package:tic_tac_toe/domain/domain.dart';
 
 class GameSearchScreen extends StatefulWidget {
   const GameSearchScreen({super.key});

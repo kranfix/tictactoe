@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tic_tac_toe_flutter/core/design_system/design_system.dart';
-import 'package:tic_tac_toe_flutter/lib.dart';
+import 'package:tic_tac_toe/core/design_system/design_system.dart';
+import 'package:tic_tac_toe/lib.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({super.key});

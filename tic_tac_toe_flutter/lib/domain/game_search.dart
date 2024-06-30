@@ -1,4 +1,4 @@
-import 'package:tic_tac_toe_flutter/game/board.dart';
+import 'package:tic_tac_toe/game/board.dart';
 
 abstract class GameRepo {
   Future<List<GameDescriptor>> listActiveGames();

@@ -60,11 +60,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDHHBT3P7E9ccfHHhC9-sP2wIOqTt_r3mw',
-    appId: '1:1085432450848:ios:70c1118bf45dcbcec71145',
+    appId: '1:1085432450848:ios:0ac48cd27c274701c71145',
     messagingSenderId: '1085432450848',
     projectId: 'tictactoe-50bcd',
     storageBucket: 'tictactoe-50bcd.appspot.com',
-    iosBundleId: 'com.example.ticTacToeFlutter',
+    iosBundleId: 'dev.kranfix.tictactoe.ticTacToeFlutter',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -78,12 +78,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyDs8rXGG-gtDpu8atuCqVCcdl48U5HZfJw',
-    appId: '1:1085432450848:web:c5abc203d0c564bec71145',
+    appId: '1:1085432450848:web:c704cfae2db595cbc71145',
     messagingSenderId: '1085432450848',
     projectId: 'tictactoe-50bcd',
     authDomain: 'tictactoe-50bcd.firebaseapp.com',
     storageBucket: 'tictactoe-50bcd.appspot.com',
-    measurementId: 'G-WFXJK0QCLC',
+    measurementId: 'G-WHE3FX26Y5',
   );
 
 }

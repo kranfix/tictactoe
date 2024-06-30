@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tic_tac_toe_flutter/domain/domain.dart';
-import 'package:tic_tac_toe_flutter/game/board.dart';
+import 'package:tic_tac_toe/domain/domain.dart';
+import 'package:tic_tac_toe/game/board.dart';
 
 class FirestoreGameSearch extends GameRepo {
   static final colRef = FirebaseFirestore.instance.collection('tictactoe');
