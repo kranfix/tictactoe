@@ -6,6 +6,7 @@ abstract interface class Player {
   const Player({required this.myToken});
   final Token myToken;
 
+  /// Returns null when there's no valid box to insert
   Future<int?> requestNext(BoardSerialization data, int? lastIndex);
 
   void dispose();

@@ -41,7 +41,19 @@ extension type Board._(List<Token?> _tokens) {
     return Board(tokens: tokens);
   }
 
+  (BoardLine, (int, int, int))? calculateWinnerLine() {
+    for (final (kind, (a, b, c)) in BoardLine.lines) {
+      if (_tokens[a] == _tokens[b] && _tokens[b] == _tokens[c]) {
+        return (kind, (a, b, c));
+      }
+    }
+    return null;
+  }
+
   bool get isEnded {
+    final winnerLine = calculateWinnerLine();
+    if (winnerLine != null) return true;
+
     for (final token in _tokens) {
       if (token == null) {
         return false;
@@ -87,4 +99,21 @@ enum BoardDeserializeError implements Exception {
 
 extension type BoardSerialization.unsafe(String _val) implements String {
   factory BoardSerialization.empty() => BoardSerialization.unsafe("_________");
+}
+
+enum BoardLine {
+  diag,
+  row,
+  col;
+
+  static const lines = [
+    (BoardLine.diag, (0, 4, 8)),
+    (BoardLine.diag, (2, 4, 6)),
+    (BoardLine.row, (0, 1, 2)),
+    (BoardLine.col, (2, 5, 8)),
+    (BoardLine.row, (8, 7, 6)),
+    (BoardLine.col, (6, 3, 9)),
+    (BoardLine.row, (3, 4, 5)),
+    (BoardLine.col, (1, 4, 7)),
+  ];
 }
