@@ -41,10 +41,12 @@ extension type Board._(List<Token?> _tokens) {
     return Board(tokens: tokens);
   }
 
-  (BoardLine, (int, int, int))? calculateWinnerLine() {
+  (BoardLine, (int, int, int), Token)? calculateWinnerLine() {
     for (final (kind, (a, b, c)) in BoardLine.lines) {
-      if (_tokens[a] == _tokens[b] && _tokens[b] == _tokens[c]) {
-        return (kind, (a, b, c));
+      final val = _tokens[a];
+      if (val == null) continue;
+      if (_tokens[b] == val && _tokens[c] == val) {
+        return (kind, (a, b, c), val);
       }
     }
     return null;
