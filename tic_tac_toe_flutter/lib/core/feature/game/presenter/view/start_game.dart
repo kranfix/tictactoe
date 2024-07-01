@@ -139,7 +139,7 @@ class OpenGameButton extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => GameScreen.playWithRemote(
               gameId: game.id,
-              myToken: game.nextPlayer,
+              myToken: game.nextPlayer.other,
               gameRepo: gameRepo,
             ),
           ),
