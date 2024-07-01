@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe/core/design_system/design_system.dart';
+import 'package:tic_tac_toe/core/mobile_core_utils/extensions/tupple_validator.dart';
 import 'package:tic_tac_toe/domain/game_search.dart';
 import 'package:tic_tac_toe/game/game.dart';
 import 'package:tic_tac_toe/lib.dart';
@@ -139,14 +140,12 @@ class Game extends ChangeNotifier {
 
     lastIndex = index;
     _remaindingBoxes--;
-    // if (_remaindingBoxes == 0) {
-    //   this.nextToken = null;
-    // } else {
+
     this.nextToken = switch (nextToken) {
       Token.circle => Token.cross,
       Token.cross => Token.circle,
     };
-    // }
+
     notifyListeners();
     return true;
   }
@@ -189,6 +188,8 @@ class _BoardBoxesState extends State<BoardBoxes> {
   @override
   Widget build(BuildContext context) {
     final player = controller.nextToken;
+    final (int, int, int)? winnerLine =
+        controller.board.calculateWinnerLine()?.$2;
     return Column(
       children: [
         GridView.builder(
@@ -202,6 +203,9 @@ class _BoardBoxesState extends State<BoardBoxes> {
           itemBuilder: (context, index) {
             return BoxItem(
               onTap: () => controller.notifyLocalSelectionToPLayers(index),
+              color: !(winnerLine?.contains(index) ?? false)
+                  ? AppColors.nilBox
+                  : Colors.green,
               child: controller.board.at(index)?.toText(),
             );
           },
