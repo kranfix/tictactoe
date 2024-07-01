@@ -101,10 +101,7 @@ class _StartGameState extends State<StartGame> {
               const Text('Games are loading')
             else
               ...gamesWatingForAnotherPlayer!.map(
-                (g) => OpenGameButton(
-                  game: g,
-                  myToken: myToken,
-                ),
+                (g) => OpenGameButton(game: g),
               ),
             //  ListView.builder(
             //       itemCount: gamesWatingForAnotherPlayer!.length,
@@ -128,11 +125,9 @@ class OpenGameButton extends StatelessWidget {
   const OpenGameButton({
     super.key,
     required this.game,
-    required this.myToken,
   });
 
   final GameDescriptor game;
-  final Token myToken;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +139,7 @@ class OpenGameButton extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => GameScreen.playWithRemote(
               gameId: game.id,
-              myToken: myToken,
+              myToken: game.nextPlayer,
               gameRepo: gameRepo,
             ),
           ),
@@ -153,10 +148,8 @@ class OpenGameButton extends StatelessWidget {
       child: ListTile(
         title: Text(
           game.name,
-          style: TextStyle(
-            color: Colors.black,
-          ),
         ),
+        leading: Text('Join as ${game.nextPlayer.other}'),
       ),
     );
   }
@@ -189,7 +182,7 @@ class _CreateRemoteGameState extends State<CreateRemoteGame> {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: TextField(
               decoration: InputDecoration(
-                hintText: 'Do Something',
+                hintText: 'Insert game name',
                 hintStyle: TextStyle(
                   color: Colors.grey[350],
                 ),
