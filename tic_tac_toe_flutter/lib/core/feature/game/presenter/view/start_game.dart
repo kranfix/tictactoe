@@ -12,7 +12,7 @@ class StartGame extends StatefulWidget {
 }
 
 class _StartGameState extends State<StartGame> {
-  List<GameDescriptor>? activeGames;
+  List<GameDescriptor>? gamesWatingForAnotherPlayer;
   bool isLoading = false;
 
   Token myToken = Token.circle;
@@ -26,6 +26,21 @@ class _StartGameState extends State<StartGame> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Spacer(),
+            ElevatedButton(
+              onPressed: () async {
+                setState(() {
+                  isLoading = true;
+                });
+                final repo = context.read<GameRepo>();
+                final games = await repo.listWaitingForCrossPlayerGames();
+
+                setState(() {
+                  gamesWatingForAnotherPlayer = games;
+                  isLoading = false;
+                });
+              },
+              child: const Text('Refresh'),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -80,20 +95,27 @@ class _StartGameState extends State<StartGame> {
             const Divider(),
             const Text('Play vs remote player'),
             const Divider(),
-            const Text('Active Games'),
+            Text('Active Games ${gamesWatingForAnotherPlayer?.length}'),
             if (isLoading) const CircularProgressIndicator(),
-            if (activeGames == null)
+            if (gamesWatingForAnotherPlayer == null)
               const Text('Games are loading')
             else
-              ListView.builder(
-                itemCount: activeGames!.length,
-                itemBuilder: (context, index) {
-                  return OpenGameButton(
-                    game: activeGames![index],
-                    myToken: myToken,
-                  );
-                },
+              ...gamesWatingForAnotherPlayer!.map(
+                (g) => OpenGameButton(
+                  game: g,
+                  myToken: myToken,
+                ),
               ),
+            //  ListView.builder(
+            //       itemCount: gamesWatingForAnotherPlayer!.length,
+            //       itemBuilder: (context, index) {
+            //         return OpenGameButton(
+            //           game: gamesWatingForAnotherPlayer![index],
+            //           myToken: myToken,
+            //         );
+            //       },
+            //     ),
+
             const Spacer(),
           ],
         ),
@@ -129,7 +151,12 @@ class OpenGameButton extends StatelessWidget {
         );
       },
       child: ListTile(
-        title: Text(game.name),
+        title: Text(
+          game.name,
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
       ),
     );
   }

@@ -55,14 +55,7 @@ class GameScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             BoardBoxes(
-              game: Game(
-                circlePlayer: LocalPlayer(
-                  myToken: Token.circle,
-                ),
-                crossPlayer: LocalPlayer(
-                  myToken: Token.cross,
-                ),
-              ),
+              game: game,
             ),
           ],
         ),
