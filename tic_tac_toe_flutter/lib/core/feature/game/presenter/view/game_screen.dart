@@ -48,8 +48,6 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final player = game.nextToken;
-
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Center(
@@ -61,7 +59,6 @@ class GameScreen extends StatelessWidget {
             BoardBoxes(
               game: game,
             ),
-            if (player != null) Text('Plays ${player.name}'),
           ],
         ),
       ),
@@ -90,7 +87,7 @@ class Game extends ChangeNotifier {
   Board get board => _tokens;
 
   bool _isAlive = true;
-  int? lastIndex = null;
+  int? lastIndex;
 
   Future<void> _start() async {
     while (_isAlive) {
@@ -183,20 +180,26 @@ class _BoardBoxesState extends State<BoardBoxes> {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      itemCount: 9,
-      physics: const BouncingScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisExtent: 140,
-      ),
-      itemBuilder: (context, index) {
-        return BoxItem(
-          onTap: () => controller.notifyLocalSelectionToPLayers(index),
-          child: controller.board.at(index)?.toText(),
-        );
-      },
+    final player = controller.nextToken;
+    return Column(
+      children: [
+        GridView.builder(
+          shrinkWrap: true,
+          itemCount: 9,
+          physics: const BouncingScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisExtent: 140,
+          ),
+          itemBuilder: (context, index) {
+            return BoxItem(
+              onTap: () => controller.notifyLocalSelectionToPLayers(index),
+              child: controller.board.at(index)?.toText(),
+            );
+          },
+        ),
+        if (player != null) Text('Plays ${player.name}'),
+      ],
     );
   }
 }
