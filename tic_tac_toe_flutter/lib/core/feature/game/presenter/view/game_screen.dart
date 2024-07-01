@@ -1,19 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:tic_tac_toe_flutter/core/design_system/design_system.dart';
-import 'package:tic_tac_toe_flutter/lib.dart';
+import 'package:tic_tac_toe/core/design_system/design_system.dart';
+import 'package:tic_tac_toe/domain/game_search.dart';
+import 'package:tic_tac_toe/game/game.dart';
+import 'package:tic_tac_toe/lib.dart';
 
 class GameScreen extends StatelessWidget {
-  const GameScreen({super.key});
+  const GameScreen._({super.key, required this.game});
+
+  factory GameScreen.standAlone({Key? key}) {
+    final game = Game(
+      circlePlayer: LocalPlayer(myToken: Token.circle),
+      crossPlayer: LocalPlayer(myToken: Token.cross),
+    );
+
+    return GameScreen._(key: key, game: game);
+  }
+
+  factory GameScreen.vsMachine({Key? key, required Token myToken}) {
+    final me = LocalPlayer(myToken: myToken);
+    final other = MachinePlayer(myToken: myToken.other);
+    final game = switch (myToken) {
+      Token.circle => Game(circlePlayer: me, crossPlayer: other),
+      Token.cross => Game(circlePlayer: other, crossPlayer: me),
+    };
+
+    return GameScreen._(key: key, game: game);
+  }
+
+  factory GameScreen.playWithRemote({
+    Key? key,
+    required String gameId,
+    required Token myToken,
+    required GameRepo gameRepo,
+  }) {
+    final me = LocalPlayer(myToken: myToken);
+    final other =
+        RemotePlayer(myToken: myToken.other, id: gameId, gameRepo: gameRepo);
+    final game = switch (myToken) {
+      Token.circle => Game(circlePlayer: me, crossPlayer: other),
+      Token.cross => Game(circlePlayer: other, crossPlayer: me),
+    };
+
+    return GameScreen._(key: key, game: game);
+  }
+
+  final Game game;
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: AppColors.background,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            BoardBoxes(),
+            Text('circle: ${game.circlePlayer.runtimeType}'),
+            Text('cross: ${game.crossPlayer.runtimeType}'),
+            BoardBoxes(
+              game: game,
+            ),
           ],
         ),
       ),
@@ -42,6 +87,7 @@ class Game extends ChangeNotifier {
   Board get board => _tokens;
 
   bool _isAlive = true;
+  int? lastIndex;
 
   Future<void> _start() async {
     while (_isAlive) {
@@ -49,11 +95,21 @@ class Game extends ChangeNotifier {
         case null:
           return;
         case Token.circle:
-          final index = await circlePlayer.requestNext(board.serialize());
+          final index =
+              await circlePlayer.requestNext(board.serialize(), lastIndex);
+          if (index == null) {
+            nextToken = null;
+            return;
+          }
           final wasInserted = _insertToken(index);
           if (wasInserted) break;
         case Token.cross:
-          final index = await crossPlayer.requestNext(board.serialize());
+          final index =
+              await crossPlayer.requestNext(board.serialize(), lastIndex);
+          if (index == null) {
+            nextToken = null;
+            return;
+          }
           final wasInserted = _insertToken(index);
           if (wasInserted) break;
       }
@@ -81,15 +137,16 @@ class Game extends ChangeNotifier {
     final wasInserted = board.insertTokenAt(index, nextToken);
     if (!wasInserted) return false;
 
+    lastIndex = index;
     _remaindingBoxes--;
-    if (_remaindingBoxes == 0) {
-      this.nextToken = null;
-    } else {
-      this.nextToken = switch (nextToken) {
-        Token.circle => Token.cross,
-        Token.cross => Token.circle,
-      };
-    }
+    // if (_remaindingBoxes == 0) {
+    //   this.nextToken = null;
+    // } else {
+    this.nextToken = switch (nextToken) {
+      Token.circle => Token.cross,
+      Token.cross => Token.circle,
+    };
+    // }
     notifyListeners();
     return true;
   }
@@ -102,20 +159,16 @@ class Game extends ChangeNotifier {
 }
 
 class BoardBoxes extends StatefulWidget {
-  const BoardBoxes({super.key});
+  const BoardBoxes({super.key, required this.game});
+
+  final Game game;
 
   @override
   State<BoardBoxes> createState() => _BoardBoxesState();
 }
 
 class _BoardBoxesState extends State<BoardBoxes> {
-  final controller = Game(
-      circlePlayer: LocalPlayer(
-        myToken: Token.circle,
-      ),
-      crossPlayer: LocalPlayer(
-        myToken: Token.cross,
-      ));
+  Game get controller => widget.game;
 
   void update() {
     setState(() {});
@@ -135,20 +188,26 @@ class _BoardBoxesState extends State<BoardBoxes> {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      itemCount: 9,
-      physics: const BouncingScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisExtent: 140,
-      ),
-      itemBuilder: (context, index) {
-        return BoxItem(
-          onTap: () => controller.notifyLocalSelectionToPLayers(index),
-          child: controller.board.at(index)?.toText(),
-        );
-      },
+    final player = controller.nextToken;
+    return Column(
+      children: [
+        GridView.builder(
+          shrinkWrap: true,
+          itemCount: 9,
+          physics: const BouncingScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisExtent: 140,
+          ),
+          itemBuilder: (context, index) {
+            return BoxItem(
+              onTap: () => controller.notifyLocalSelectionToPLayers(index),
+              child: controller.board.at(index)?.toText(),
+            );
+          },
+        ),
+        if (player != null) Text('Plays ${player.name}'),
+      ],
     );
   }
 }

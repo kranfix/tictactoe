@@ -1,7 +1,8 @@
-import 'package:tic_tac_toe_flutter/game/board.dart';
+import 'package:tic_tac_toe/game/board.dart';
 
 abstract class GameRepo {
   Future<List<GameDescriptor>> listActiveGames();
+  Future<List<GameDescriptor>> listWaitingForCrossPlayerGames();
 
   Future<GameDescriptor> createGame(String name);
   Future<void> updateGame(
@@ -15,7 +16,7 @@ abstract class GameRepo {
 }
 
 enum GameStatus {
-  waitingForCrossPlayer,
+  waitingForOtherPlayer,
   active,
   draw,
   wonCircle,
@@ -23,7 +24,7 @@ enum GameStatus {
 
   factory GameStatus.fromString(String value) {
     for (final s in GameStatus.values) {
-      if (s.toString() == value) return s;
+      if (s.name == value) return s;
     }
     throw Exception("Invalid Status");
   }
@@ -70,11 +71,12 @@ class GameDescriptor {
 
   Map<String, dynamic> toMap() {
     return {
+      "id": id,
       "name": name,
       "board": board,
-      "nextPlayer": nextPlayer.toString(),
+      "nextPlayer": nextPlayer.name,
       "lastIndex": lastIndex,
-      "status": status.toString(),
+      "status": status.name,
     };
   }
 }

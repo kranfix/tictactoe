@@ -1,12 +1,13 @@
 import 'dart:async';
-import 'package:tic_tac_toe_flutter/domain/game_search.dart';
+import 'package:tic_tac_toe/domain/game_search.dart';
 import './board.dart';
 
 abstract interface class Player {
   const Player({required this.myToken});
   final Token myToken;
 
-  Future<int> requestNext(BoardSerialization data);
+  /// Returns null when there's no valid box to insert
+  Future<int?> requestNext(BoardSerialization data, int? lastIndex);
 
   void dispose();
 }
@@ -36,10 +37,27 @@ class LocalPlayer extends Player {
   }
 
   @override
-  Future<int> requestNext(BoardSerialization data) {
+  Future<int?> requestNext(BoardSerialization data, int? lastIndex) {
     board = Board.deserialize(data);
+    if (board.isEnded) {
+      return Future.value(null);
+    }
     _completer ??= Completer();
     return _completer!.future;
+  }
+}
+
+class MachinePlayer extends Player {
+  MachinePlayer({required super.myToken});
+
+  @override
+  void dispose() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> requestNext(BoardSerialization data, int? lastIndex) {
+    throw UnimplementedError();
   }
 }
 
@@ -83,18 +101,19 @@ class RemotePlayer extends Player {
 
   void _onNext(Token nextPlayer, int lastIndex) {
     // Ignored because it was the local player
-    if (nextPlayer != myToken) return;
+    if (nextPlayer == myToken) return;
 
     _completer?.complete(lastIndex);
     _completer = null;
   }
 
   @override
-  Future<int> requestNext(BoardSerialization data) async {
+  Future<int?> requestNext(BoardSerialization data, int? lastIndex) async {
     await gameRepo.updateGame(
       id,
       board: data,
       nextPlayer: myToken,
+      lastIndex: lastIndex,
     );
     _completer ??= Completer();
     return _completer!.future;

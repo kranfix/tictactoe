@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tic_tac_toe_flutter/core/design_system/tokens/colors/colors.dart';
+import 'package:tic_tac_toe/core/design_system/tokens/colors/colors.dart';
 
 class BoxItem extends StatelessWidget {
   const BoxItem({
