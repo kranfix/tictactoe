@@ -48,15 +48,20 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final player = game.nextToken;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Text('circle: ${game.circlePlayer.runtimeType}'),
+            Text('cross: ${game.crossPlayer.runtimeType}'),
             BoardBoxes(
               game: game,
             ),
+            if (player != null) Text('Plays ${player.name}'),
           ],
         ),
       ),
