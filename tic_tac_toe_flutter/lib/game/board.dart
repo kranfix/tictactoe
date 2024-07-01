@@ -114,7 +114,7 @@ enum BoardLine {
     (BoardLine.row, (0, 1, 2)),
     (BoardLine.col, (2, 5, 8)),
     (BoardLine.row, (8, 7, 6)),
-    (BoardLine.col, (6, 3, 9)),
+    (BoardLine.col, (6, 3, 0)),
     (BoardLine.row, (3, 4, 5)),
     (BoardLine.col, (1, 4, 7)),
   ];
