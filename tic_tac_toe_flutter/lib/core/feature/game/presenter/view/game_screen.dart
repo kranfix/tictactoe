@@ -139,14 +139,12 @@ class Game extends ChangeNotifier {
 
     lastIndex = index;
     _remaindingBoxes--;
-    // if (_remaindingBoxes == 0) {
-    //   this.nextToken = null;
-    // } else {
+
     this.nextToken = switch (nextToken) {
       Token.circle => Token.cross,
       Token.cross => Token.circle,
     };
-    // }
+
     notifyListeners();
     return true;
   }
@@ -203,6 +201,9 @@ class _BoardBoxesState extends State<BoardBoxes> {
             return BoxItem(
               onTap: () => controller.notifyLocalSelectionToPLayers(index),
               child: controller.board.at(index)?.toText(),
+              color: !controller.board.containsWinnerIndexes(index: index)
+                  ? AppColors.nilBox
+                  : Colors.green,
             );
           },
         ),
