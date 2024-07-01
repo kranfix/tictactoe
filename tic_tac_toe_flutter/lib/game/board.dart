@@ -41,6 +41,15 @@ extension type Board._(List<Token?> _tokens) {
     return Board(tokens: tokens);
   }
 
+  bool get isEnded {
+    for (final token in _tokens) {
+      if (token == null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   Token? at(int index) {
     return _tokens[index];
   }

@@ -97,11 +97,19 @@ class Game extends ChangeNotifier {
         case Token.circle:
           final index =
               await circlePlayer.requestNext(board.serialize(), lastIndex);
+          if (index == null) {
+            nextToken = null;
+            return;
+          }
           final wasInserted = _insertToken(index);
           if (wasInserted) break;
         case Token.cross:
           final index =
               await crossPlayer.requestNext(board.serialize(), lastIndex);
+          if (index == null) {
+            nextToken = null;
+            return;
+          }
           final wasInserted = _insertToken(index);
           if (wasInserted) break;
       }
@@ -131,14 +139,14 @@ class Game extends ChangeNotifier {
 
     lastIndex = index;
     _remaindingBoxes--;
-    if (_remaindingBoxes == 0) {
-      this.nextToken = null;
-    } else {
-      this.nextToken = switch (nextToken) {
-        Token.circle => Token.cross,
-        Token.cross => Token.circle,
-      };
-    }
+    // if (_remaindingBoxes == 0) {
+    //   this.nextToken = null;
+    // } else {
+    this.nextToken = switch (nextToken) {
+      Token.circle => Token.cross,
+      Token.cross => Token.circle,
+    };
+    // }
     notifyListeners();
     return true;
   }
