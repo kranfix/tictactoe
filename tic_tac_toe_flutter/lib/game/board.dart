@@ -52,18 +52,6 @@ extension type Board._(List<Token?> _tokens) {
     return null;
   }
 
-  bool containsWinnerIndexes({required int index}) {
-    if (isEnded) {
-      return [
-        calculateWinnerLine()?.$2.$1,
-        calculateWinnerLine()?.$2.$2,
-        calculateWinnerLine()?.$2.$3,
-      ].contains(index);
-    } else {
-      return false;
-    }
-  }
-
   bool get isEnded {
     final winnerLine = calculateWinnerLine();
     if (winnerLine != null) return true;

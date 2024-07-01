@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe/core/design_system/design_system.dart';
+import 'package:tic_tac_toe/core/mobile_core_utils/extensions/tupple_validator.dart';
 import 'package:tic_tac_toe/domain/game_search.dart';
 import 'package:tic_tac_toe/game/game.dart';
 import 'package:tic_tac_toe/lib.dart';
@@ -187,6 +188,8 @@ class _BoardBoxesState extends State<BoardBoxes> {
   @override
   Widget build(BuildContext context) {
     final player = controller.nextToken;
+    final (int, int, int)? winnerLine =
+        controller.board.calculateWinnerLine()?.$2;
     return Column(
       children: [
         GridView.builder(
@@ -200,10 +203,10 @@ class _BoardBoxesState extends State<BoardBoxes> {
           itemBuilder: (context, index) {
             return BoxItem(
               onTap: () => controller.notifyLocalSelectionToPLayers(index),
-              child: controller.board.at(index)?.toText(),
-              color: !controller.board.containsWinnerIndexes(index: index)
+              color: !(winnerLine?.contains(index) ?? false)
                   ? AppColors.nilBox
                   : Colors.green,
+              child: controller.board.at(index)?.toText(),
             );
           },
         ),
