@@ -6,7 +6,7 @@ abstract interface class Player {
   const Player({required this.myToken});
   final Token myToken;
 
-  Future<int> requestNext(BoardSerialization data, int lastIndex);
+  Future<int> requestNext(BoardSerialization data, int? lastIndex);
 
   void dispose();
 }
@@ -36,7 +36,7 @@ class LocalPlayer extends Player {
   }
 
   @override
-  Future<int> requestNext(BoardSerialization data, int lastIndex) {
+  Future<int> requestNext(BoardSerialization data, int? lastIndex) {
     board = Board.deserialize(data);
     _completer ??= Completer();
     return _completer!.future;
@@ -52,7 +52,7 @@ class MachinePlayer extends Player {
   }
 
   @override
-  Future<int> requestNext(BoardSerialization data, int lastIndex) {
+  Future<int> requestNext(BoardSerialization data, int? lastIndex) {
     throw UnimplementedError();
   }
 }
@@ -104,7 +104,7 @@ class RemotePlayer extends Player {
   }
 
   @override
-  Future<int> requestNext(BoardSerialization data, int lastIndex) async {
+  Future<int> requestNext(BoardSerialization data, int? lastIndex) async {
     await gameRepo.updateGame(
       id,
       board: data,

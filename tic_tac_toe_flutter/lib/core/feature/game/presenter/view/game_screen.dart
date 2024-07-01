@@ -90,6 +90,7 @@ class Game extends ChangeNotifier {
   Board get board => _tokens;
 
   bool _isAlive = true;
+  int? lastIndex = null;
 
   Future<void> _start() async {
     while (_isAlive) {
@@ -97,11 +98,13 @@ class Game extends ChangeNotifier {
         case null:
           return;
         case Token.circle:
-          final index = await circlePlayer.requestNext(board.serialize());
+          final index =
+              await circlePlayer.requestNext(board.serialize(), lastIndex);
           final wasInserted = _insertToken(index);
           if (wasInserted) break;
         case Token.cross:
-          final index = await crossPlayer.requestNext(board.serialize());
+          final index =
+              await crossPlayer.requestNext(board.serialize(), lastIndex);
           final wasInserted = _insertToken(index);
           if (wasInserted) break;
       }
@@ -129,6 +132,7 @@ class Game extends ChangeNotifier {
     final wasInserted = board.insertTokenAt(index, nextToken);
     if (!wasInserted) return false;
 
+    lastIndex = index;
     _remaindingBoxes--;
     if (_remaindingBoxes == 0) {
       this.nextToken = null;
