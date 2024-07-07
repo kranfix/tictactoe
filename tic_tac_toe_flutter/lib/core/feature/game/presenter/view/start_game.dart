@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tic_tac_toe/core/design_system/design_system.dart';
+import 'package:tic_tac_toe/core/design_system/layouts/scaffold/ttt_designed_scaffold.dart';
 import 'package:tic_tac_toe/core/feature/game/presenter/view/game_screen.dart';
 import 'package:tic_tac_toe/domain/domain.dart';
 import 'package:tic_tac_toe/lib.dart';
@@ -19,8 +21,8 @@ class _StartGameState extends State<StartGame> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
+    return TTTDesignedScaffold(
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
