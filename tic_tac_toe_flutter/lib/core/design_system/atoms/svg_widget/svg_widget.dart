@@ -7,7 +7,7 @@ class SvgWidget extends StatelessWidget {
     required this.path,
     this.width,
     this.height,
-    required this.fit,
+    this.fit = BoxFit.contain,
   });
   final String path;
   final double? width;
